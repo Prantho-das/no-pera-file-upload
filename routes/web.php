@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 Route::get('/uploads', function () {
 
-    return ImageUpload::latest()->paginate(2);
+    return ImageUpload::latest()->paginate(20);
 });
 Route::post('/uploads', function () {
 

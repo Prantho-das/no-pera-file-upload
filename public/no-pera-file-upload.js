@@ -2,7 +2,7 @@ let noPeraFileUpload = document.querySelectorAll(".no-pera-file-upload");
 let mainUrl = window.location.origin;
 
 async function fetchData(page = 1) {
-    let data = await fetch(mainUrl+`/uploads?page=${page}`);
+    let data = await fetch(mainUrl + `/uploads?page=${page}`);
     let res = await data.json();
     return res;
 }
@@ -109,7 +109,6 @@ data-no-pera-file-upload-preview="${singleOrMultiple}"   >
     nextBtn.removeAttribute("disabled");
     selectOption();
 }
-
 function selectOption() {
     let imagePreviewImg = document.querySelectorAll(
         ".no-pera-file-upload-modal-body-content-preview-img"
@@ -158,14 +157,46 @@ function selectOption() {
         });
     });
 }
+async function fetchNewUploadedFile(returnData, singleOrMultiple) {
+    let uploadModal = document.querySelector(".no-pera-file-upload-modal");
+
+    let previewDiv = document.querySelector(
+        ".no-pera-file-upload-modal-body-content-preview"
+    );
+    //fetch data
+    let fetchD = await fetchData(1);
+    let img = "";
+    let inputData = uploadModal.getAttribute("data-selected");
+
+    if (inputData.length > 0) inputData = inputData.split(",");
+    else inputData = [];
+    fetchD?.data?.forEach((item) => {
+        img += `<div class="no-pera-file-upload-modal-body-content-preview-img
+${
+    inputData.includes(item.id.toString())
+        ? "no-pera-file-upload-modal-body-content-preview-img-active"
+        : ""
+}
+"
+data-value="${item.id}"
+data-no-pera-file-upload-preview="${singleOrMultiple}"
+>
+                            <img src="
+${mainUrl + "/" + item.path}
+
+" alt="random image" class="no-pera-file-upload-modal-body-content-preview-img-img">
+</div>`;
+    });
+    previewDiv.innerHTML = img;
+
+    selectOption();
+}
 let openModal = async (e, singleOrMultiple) => {
     e.preventDefault();
-
     let modal = document.createElement("div");
     modal.setAttribute("id", "modal-no-pera-file-upload");
-    modal.classList.add("modal");
+    modal.classList.add("modal-no-pera-file-upload-main");
     let fetchD = await fetchData(1);
-    console.log(fetchD);
     let img = "";
     let inputData = e.target.value;
     if (inputData.length > 0) inputData = inputData.split(",");
@@ -295,9 +326,35 @@ Close
     uploadBtn.addEventListener("click", () => {
         let selected = document.querySelector(".no-pera-file-upload-modal");
         let selectedValue = selected.getAttribute("data-selected");
-
+        //parent div
         e.target.value = selectedValue;
-       
+        let parentDiv = e.target.parentElement;
+        if (parentDiv) {
+            //parent div contains class
+            if (parentDiv.classList.contains("no-pera-preview")) {
+                //create label
+                if (selectedValue.length > 0) {
+                    //check the label is exist or not
+                    let selectedValueInput = selectedValue.split(",");
+                    let label = document.createElement("label");
+                    if (parentDiv.querySelector(".no-pera-preview-label")) {
+                        //if exist then update the label
+                        label = parentDiv.querySelector(
+                            ".no-pera-preview-label"
+                        );
+                    } else {
+                        label.setAttribute("for", "file_id");
+                        label.classList.add("no-pera-preview-label");
+                    }
+
+                    label.innerHTML =
+                        selectedValueInput.length + " File Selected";
+                    parentDiv.appendChild(label);
+                }
+            }
+        }
+        //input
+
         closeModal();
     });
     let fileId = document.querySelector("#file_id");
@@ -308,15 +365,29 @@ Close
         for (let i = 0; i < files.length; i++) {
             formData.append("file[]", files[i]);
         }
-        fetch("/uploads", {
+        let uploadUrl = mainUrl + "/uploads";
+        let csrfToken = document.querySelector('meta[name="csrf-token"]');
+
+        fetch(uploadUrl, {
             method: "POST",
             body: formData,
             headers: {
-                "X-CSRF-Token": "{{ csrf_token() }}",
+                "X-CSRF-Token": csrfToken.content,
             },
-        }).then((res) => {
-            console.log(res);
-        });
+        })
+            .then((res) => {
+                return res.json();
+            })
+            .then((res) => {
+                alert("File Uploaded");
+                fetchNewUploadedFile(res?.image || [], singleOrMultiple);
+
+                imagePreview.classList.remove("no-pera-none");
+                imageUploadInput.classList.add("no-pera-none");
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     });
 };
 

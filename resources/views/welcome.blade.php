@@ -14,14 +14,17 @@
     <!-- Styles -->
     @noPeraFileUploadCss
     <link rel="stylesheet" href="{{ asset('no-pera-file-upload.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body class="antialiased">
-    <div class="p_flex">
+    <div class="no-pera-preview">
         <input type="text" class="no-pera-file-upload" data-no-pera-file-upload="multiple">
-        <input type="text" class="no-pera-file-upload" data-no-pera-file-upload="single">
-
     </div>
+    <div class="no-pera-preview">
+        <input type="text" class="no-pera-file-upload" data-no-pera-file-upload="single">
+    </div>
+
     @noPeraFileUploadJs
     <script src="{{ asset('no-pera-file-upload.js') }}"></script>
 

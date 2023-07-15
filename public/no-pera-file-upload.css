@@ -1,7 +1,15 @@
 .no-pera-none {
     display: none !important;
 }
-
+.modal-no-pera-file-upload-main {
+    overflow: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+    z-index: 999;
+}
 .no-pera-file-upload-modal {
     background-color: #fff;
     border-radius: 5px;
@@ -31,11 +39,9 @@
 .no-pera-file-upload-modal {
     display: flex;
     flex-direction: column;
-    +
     justify-content: space-between;
     height: 100%;
-    width: 90;
-    height: 100vh;
+    height: 90vh;
 }
 .no-pera-file-upload-modal-footer-btn {
     display: flex;
@@ -71,7 +77,6 @@
     height: 100%;
     display: flex;
     flex-wrap: wrap;
-
     gap: 1rem;
 }
 .no-pera-file-upload-fluid {
@@ -93,7 +98,7 @@
     object-fit: cover;
 }
 .no-pera-file-upload-modal-body {
-    flex: 1;
+    display: grid;
 }
 .no-pera-file-upload-modal-body-content-input {
     width: 100%;
