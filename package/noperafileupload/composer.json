@@ -1,0 +1,13 @@
+{
+    "name": "pranthokumar/noperafileupload",
+    "description": "A demo package",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Prantho Kumar",
+            "email": "pranthokumardas786@gmail.com"
+        }
+    ],
+    "require": {}
+}
